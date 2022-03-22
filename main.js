@@ -2,11 +2,18 @@
 const nameElement = document.getElementById('name');
 const lastNameElement = document.getElementById('last-name');
 const emailElement = document.getElementById('email');
+const contactList = document.querySelector('.contact-list');
 
 const form = document.getElementById('form-contact');
 
 //event listeners
 form.addEventListener('submit', save);
+contactList.addEventListener('click', contactActions);
+
+let allContacts = [];
+
+
+
 function save(e) {
   e.preventDefault();
 
@@ -16,10 +23,12 @@ function save(e) {
     email: emailElement.value,
   };
   const result = dataControl(contact);
-  createInfo(result.message, result.status);
   if (result.status) {
     addContact(contact);
+  } else {
+      createInfo(result.message, result.status);
   }
+  console.log(allContacts);
 }
 
 function dataControl(contact) {
@@ -34,7 +43,6 @@ function dataControl(contact) {
   cleanForms();
   return {
     status: true,
-    message: 'Person Saved',
   };
 }
 
@@ -55,19 +63,30 @@ function cleanForms() {
 }
 
 function addContact(contact) {
-    const newContact = document.createElement('tr');
-    const newName = document.createElement('td');
-    const newLastName = document.createElement('td');
-    const newEmail = document.createElement('td');
-    const newActions = document.createElement('td');
-    newName.textContent = contact.name;
-    newLastName.textContent = contact.lastName;
-    newEmail.textContent = contact.email;
-    newActions.innerHTML = `<button class="btn btn--edit"><i class="far fa-edit"></i></button>
-  <button class="btn btn--delete"><i class="far fa-trash-alt"></i></button>`;
-    newContact.appendChild(newName);
-    newContact.appendChild(newLastName);
-    newContact.appendChild(newEmail);
-    newContact.appendChild(newActions);
-    document.querySelector('tbody').appendChild(newContact);
+  const newContact = document.createElement('tr');
+  const {name, lastName, email} = contact;
+  newContact.innerHTML = `<td>${name}</td>
+    <td>${lastName}</td>
+    <td>${email}</td>
+    <td>
+      <button class="btn btn--edit"><i class="far fa-edit"></i></button>
+      <button class="btn btn--delete"><i class="far fa-trash-alt"></i></button>
+    </td>`;
+  contactList.appendChild(newContact);
+  allContacts.push(newContact);
+  createInfo("Contact added successfully", true);
+}
+ 
+function contactActions(e) {
+    if(e.target.classList.contains('btn--delete')) {
+        const deletingContact = e.target.parentElement.parentElement;
+        removeContact(deletingContact);
+    } else if (e.target.classList.contains('btn--edit')) {
+        console.log('editing');
+    }
+}
+
+function removeContact(deletingElement) {
+    deletingElement.remove();
+    allContacts.splice(allContacts.indexOf(deletingElement), 1);
 }
