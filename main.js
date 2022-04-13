@@ -11,8 +11,7 @@ form.addEventListener('submit', save);
 contactList.addEventListener('click', contactActions);
 
 let allContacts = [];
-
-
+let selectedRow = undefined;
 
 function save(e) {
   e.preventDefault();
@@ -24,11 +23,26 @@ function save(e) {
   };
   const result = dataControl(contact);
   if (result.status) {
-    addContact(contact);
+    if (selectedRow) {
+      updateContact(contact); 
+    } else {
+      addContact(contact);
+    }
   } else {
-      createInfo(result.message, result.status);
+    createInfo(result.message, result.status);
   }
-  console.log(allContacts);
+}
+
+function updateContact(contact) {
+  const indexOfUpdate = allContacts.indexOf(allContacts.find(obj => obj.email === selectedRow.cells[2].textContent));
+  allContacts[indexOfUpdate] = contact;
+  
+  selectedRow.cells[0].textContent = contact.name;
+  selectedRow.cells[1].textContent = contact.lastName;
+  selectedRow.cells[2].textContent = contact.email;
+
+  document.querySelector('.save-update').value = 'Save';
+  selectedRow = undefined;
 }
 
 function dataControl(contact) {
@@ -40,7 +54,7 @@ function dataControl(contact) {
       };
     }
   }
-  cleanForms();
+  clearForms();
   return {
     status: true,
   };
@@ -56,7 +70,7 @@ function createInfo(msg, status) {
   setTimeout(() => createdData.remove(), 1500);
 }
 
-function cleanForms() {
+function clearForms() {
   nameElement.value = '';
   lastNameElement.value = '';
   emailElement.value = '';
@@ -73,20 +87,31 @@ function addContact(contact) {
       <button class="btn btn--delete"><i class="far fa-trash-alt"></i></button>
     </td>`;
   contactList.appendChild(newContact);
-  allContacts.push(newContact);
-  createInfo("Contact added successfully", true);
+  allContacts.push(contact);
+  createInfo('Contact added successfully', true);
 }
- 
+
 function contactActions(e) {
-    if(e.target.classList.contains('btn--delete')) {
-        const deletingContact = e.target.parentElement.parentElement;
-        removeContact(deletingContact);
-    } else if (e.target.classList.contains('btn--edit')) {
-        console.log('editing');
-    }
+  if (e.target.classList.contains('btn--delete')) {
+    const deletingContact = e.target.parentElement.parentElement;
+    removeContact(deletingContact);
+  } else if (e.target.classList.contains('btn--edit')) {
+    document.querySelector('.save-update').value = 'Update';
+    const selectedTr = e.target.parentElement.parentElement;
+    
+    const updateEmail = selectedTr.cells[2].textContent;
+
+    nameElement.value = selectedTr.cells[0].textContent;
+    lastNameElement.value = selectedTr.cells[1].textContent;
+    emailElement.value = selectedTr.cells[2].textContent;
+
+    selectedRow = selectedTr;
+  }
 }
 
 function removeContact(deletingElement) {
-    deletingElement.remove();
-    allContacts.splice(allContacts.indexOf(deletingElement), 1);
+  deletingElement.remove();
+  allContacts.splice(allContacts.indexOf(deletingElement), 1);
+  clearForms();
+  document.querySelector('.save-update').value = 'Save';
 }
