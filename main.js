@@ -99,8 +99,6 @@ function contactActions(e) {
     document.querySelector('.save-update').value = 'Update';
     const selectedTr = e.target.parentElement.parentElement;
     
-    const updateEmail = selectedTr.cells[2].textContent;
-
     nameElement.value = selectedTr.cells[0].textContent;
     lastNameElement.value = selectedTr.cells[1].textContent;
     emailElement.value = selectedTr.cells[2].textContent;
@@ -111,7 +109,17 @@ function contactActions(e) {
 
 function removeContact(deletingElement) {
   deletingElement.remove();
-  allContacts.splice(allContacts.indexOf(deletingElement), 1);
+  console.log(deletingElement);
+  const deletingContact = {
+    name: deletingElement.cells[0].textContent,
+    lastName: deletingElement.cells[1].textContent,
+    email: deletingElement.cells[2].textContent,
+  }
+  console.log(deletingContact);
+  console.log(allContacts);
+  const indexToDelete = allContacts.indexOf(allContacts.find(obj => obj.email === deletingContact.email));
+  allContacts.splice(indexToDelete, 1);
+  console.log(allContacts);
   clearForms();
   document.querySelector('.save-update').value = 'Save';
 }
