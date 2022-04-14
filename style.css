@@ -17,14 +17,20 @@
     margin: 1rem 0;
     padding: 1rem;
     border-radius: 4px;
+    visibility: hidden;
+    transition: .3s ease-in-out;
+    height: 3rem;
+    border: 1px solid black;
 }
 
 .info--success {
     border: 1px solid green;
+    visibility: visible;
 }
 
 .info--error {
     border: 1px solid red;
+    visibility: visible;
 }
 
 .far {
