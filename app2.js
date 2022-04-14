@@ -12,7 +12,7 @@ class Util {
   }
 
   static isEmailValid(email) {
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.trim())) {
       return true;
     }
   }
@@ -96,7 +96,7 @@ class Ui {
 
   saveUpdate(e) {
     e.preventDefault();
-    const newContact = new Contact(this.firstName.value, this.lastName.value, this.email.value);
+    const newContact = new Contact(this.firstName.value.trim(), this.lastName.value.trim(), this.email.value.trim());
     const result = Util.controlEmptyField(newContact.firstName, newContact.lastName, newContact.email);
     const isEmailValid = Util.isEmailValid(this.email.value);
 
@@ -136,7 +136,7 @@ class Db {
     this.allContacts = this.getData();
   }
   isEmailUnique(email) {
-    const result = this.allContacts.some(contact => contact.email === email);
+    const result = this.allContacts.some(contact => contact.email.trim() === email.trim());
     return !result;
   }
   getData() {
